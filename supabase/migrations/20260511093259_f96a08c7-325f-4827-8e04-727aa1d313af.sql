@@ -1,0 +1,1 @@
+ALTER TABLE public.lojistas ADD COLUMN IF NOT EXISTS doc_fachada_url text;

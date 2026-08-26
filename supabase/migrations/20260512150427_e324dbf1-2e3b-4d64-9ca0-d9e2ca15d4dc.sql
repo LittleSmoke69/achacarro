@@ -1,0 +1,1 @@
+CREATE POLICY "admin reads all lead_actions" ON public.lead_actions FOR SELECT TO authenticated USING (has_role(auth.uid(), 'admin'::app_role));

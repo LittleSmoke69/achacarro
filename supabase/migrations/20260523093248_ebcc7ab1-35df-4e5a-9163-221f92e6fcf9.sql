@@ -1,0 +1,14 @@
+REVOKE EXECUTE ON FUNCTION public.lojista_get_propostas() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.lojista_responder_contraproposta(uuid, text, numeric, text) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_get_propostas_with_email(integer) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_lead_full_history(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_soft_delete_lojista(uuid, text) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_soft_delete_lead(uuid, text) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_soft_delete_proposta(uuid, text) FROM anon, public;
+GRANT EXECUTE ON FUNCTION public.lojista_get_propostas() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.lojista_responder_contraproposta(uuid, text, numeric, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_get_propostas_with_email(integer) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_lead_full_history(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_soft_delete_lojista(uuid, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_soft_delete_lead(uuid, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_soft_delete_proposta(uuid, text) TO authenticated;
