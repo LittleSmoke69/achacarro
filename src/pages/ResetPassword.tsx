@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
+import { FormPage } from "@/components/forms/form-page";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/PasswordInput";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +14,6 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supabase hash includes type=recovery on password recovery links.
     const hash = window.location.hash;
     if (hash.includes("type=recovery") || hash.includes("access_token")) {
       setReady(true);
@@ -36,27 +33,25 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <section className="container flex flex-1 items-center justify-center py-16">
-        <div className="w-full max-w-md space-y-5 rounded-3xl border bg-card p-8 shadow-soft">
-          <h1 className="font-display text-2xl font-bold text-center">Nova senha</h1>
-          {ready ? (
-            <>
-              <div className="space-y-1.5">
-                <Label>Nova senha (mín. 8)</Label>
-                <PasswordInput value={password} onChange={e => setPassword(e.target.value)} minLength={8} />
-              </div>
-              <Button variant="hero" size="lg" className="w-full" onClick={submit} disabled={loading}>
-                {loading ? "A guardar..." : "Atualizar senha"}
-              </Button>
-            </>
-          ) : (
-            <p className="text-center text-sm text-muted-foreground">Link inválido ou expirado.</p>
-          )}
+    <FormPage
+      eyebrow="Acesso"
+      title="Nova senha"
+      subtitle="Defina uma senha com pelo menos 8 caracteres."
+      maxWidth="max-w-md"
+    >
+      {ready ? (
+        <div className="space-y-5">
+          <div className="space-y-1.5">
+            <Label>Nova senha (mín. 8)</Label>
+            <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} />
+          </div>
+          <Button variant="hero" size="lg" className="w-full rounded-full" onClick={submit} disabled={loading}>
+            {loading ? "A guardar..." : "Atualizar senha"}
+          </Button>
         </div>
-      </section>
-      <SiteFooter />
-    </div>
+      ) : (
+        <p className="text-center text-sm text-muted-foreground">Link inválido ou expirado.</p>
+      )}
+    </FormPage>
   );
 }

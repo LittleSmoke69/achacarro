@@ -1,5 +1,4 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
+import { FormPage } from "@/components/forms/form-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,15 +38,12 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <section className="container flex flex-1 items-center justify-center py-16">
-        <div className="w-full max-w-md space-y-5 rounded-3xl border bg-card p-8 shadow-soft">
-          <div className="text-center">
-            <h1 className="font-display text-2xl font-bold">Entrar como stand</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Aceda ao seu painel de leads</p>
-          </div>
-
+    <FormPage
+      eyebrow="Acesso"
+      title="Entrar como stand"
+      subtitle="Aceda ao painel de leads."
+      maxWidth="max-w-md"
+    >
           {!forgotOpen ? (
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-1.5">
@@ -59,7 +55,7 @@ const Login = () => {
                 </div>
                 <PasswordInput name="password" required />
               </div>
-              <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
+              <Button type="submit" variant="hero" size="lg" className="w-full rounded-full" disabled={loading}>
                 {loading ? "A entrar..." : "Entrar"}
               </Button>
             </form>
@@ -70,19 +66,16 @@ const Login = () => {
                 <Input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} />
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={() => setForgotOpen(false)}>Voltar</Button>
-                <Button variant="hero" className="flex-1" onClick={onForgot}>Enviar</Button>
+                <Button variant="outline" className="flex-1 rounded-full" onClick={() => setForgotOpen(false)}>Voltar</Button>
+                <Button variant="hero" className="flex-1 rounded-full" onClick={onForgot}>Enviar</Button>
               </div>
             </div>
           )}
 
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             Não tem conta? <Link to="/lojista" className="font-semibold text-accent hover:underline">Registar</Link>
           </p>
-        </div>
-      </section>
-      <SiteFooter />
-    </div>
+    </FormPage>
   );
 };
 

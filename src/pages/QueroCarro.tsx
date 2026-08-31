@@ -1,12 +1,11 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
+import { FormPage, QuizStepper } from "@/components/forms/form-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CheckCircle2, Loader2, ArrowLeft, ArrowRight, X, Upload } from "lucide-react";
@@ -283,24 +282,20 @@ const QueroCarro = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <section className="bg-gradient-hero py-12 text-primary-foreground">
-        <div className="container">
-          <h1 className="font-display text-3xl font-extrabold md:text-4xl">Encontre o seu carro</h1>
-          <p className="mt-2 text-primary-foreground/80">É grátis. Stands verificados respondem com propostas.</p>
-        </div>
-      </section>
-      <section className="container py-12">
+    <FormPage
+      eyebrow="Pedido"
+      title="Encontre o seu carro"
+      subtitle="É grátis. Stands verificados respondem com propostas."
+    >
         {sent ? (
-          <div className="mx-auto max-w-xl rounded-3xl border bg-card p-10 text-center shadow-soft">
+          <div className="py-6 text-center">
             <CheckCircle2 className="mx-auto h-14 w-14 text-accent" />
-            <h2 className="mt-4 font-display text-2xl font-bold">Estamos a procurar as melhores propostas para si</h2>
+            <h2 className="mt-4 font-display text-2xl font-bold tracking-tight">Estamos a procurar as melhores propostas para si</h2>
             <p className="mt-2 text-muted-foreground">Em breve receberá contactos de stands no seu WhatsApp e email.</p>
           </div>
         ) : (
-          <div className="mx-auto max-w-3xl rounded-3xl border bg-card p-8 shadow-soft md:p-10">
-            <Stepper step={step} total={4} />
+          <>
+            <QuizStepper step={step} labels={["Tipo", "Pagamento", "Carro", "Contacto"]} />
 
             {step === 1 && (
               <Step title="Tipo de compra" subtitle="Como pretende usar o carro?">
@@ -432,7 +427,7 @@ const QueroCarro = () => {
                       {data.retoma_tem_danos === "sim" && (
                         <div className="mt-4">
                           <Label className="text-sm font-semibold">Envie fotos dos danos (riscos, amassados, etc.) *</Label>
-                          <label className="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-dashed border-border bg-background p-4 text-sm text-muted-foreground hover:border-accent">
+                          <label className="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-background p-4 text-sm text-muted-foreground transition hover:border-accent">
                             <Upload className="h-4 w-4" /> Carregar fotos dos danos
                             <input type="file" accept="image/jpeg,image/png" multiple className="hidden"
                               onChange={(e) => handleDanosFotos(e.target.files)} />
@@ -544,16 +539,16 @@ const QueroCarro = () => {
 
             <div className="mt-8 flex items-center justify-between gap-3">
               {step > 1 ? (
-                <Button variant="outline" onClick={back}><ArrowLeft className="mr-1 h-4 w-4" /> Voltar</Button>
+                <Button variant="outline" className="rounded-full" onClick={back}><ArrowLeft className="mr-1 h-4 w-4" /> Voltar</Button>
               ) : <div />}
               {step < 4 && (
-                <Button variant="hero" size="lg" onClick={next}
+                <Button variant="hero" size="lg" className="rounded-full" onClick={next}
                   disabled={(step === 1 && !canNext1) || (step === 2 && !canNext2) || (step === 3 && !canNext3)}>
                   Continuar <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               )}
               {step === 4 && (
-                <Button variant="hero" size="lg" onClick={submit} disabled={loading || uploading || !aceiteRgpd}>
+                <Button variant="hero" size="lg" className="rounded-full" onClick={submit} disabled={loading || uploading || !aceiteRgpd}>
                   {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {uploading ? "A carregar fotos..." : "A enviar..."}</> : "Enviar pedido grátis"}
                 </Button>
               )}
@@ -561,29 +556,18 @@ const QueroCarro = () => {
 
             {step === 4 && (
               <p className="mt-4 text-center text-sm text-muted-foreground">
-                🔒 Os seus dados estão protegidos e serão utilizados apenas para envio de propostas de stands parceiros.
+                Os seus dados estão protegidos e serão utilizados apenas para envio de propostas de stands parceiros.
               </p>
             )}
-          </div>
+          </>
         )}
-      </section>
-      <SiteFooter />
-    </div>
+    </FormPage>
   );
 };
 
-const Stepper = ({ step, total }: { step: number; total: number }) => (
-  <div className="mb-8 flex items-center gap-2">
-    {Array.from({ length: total }).map((_, i) => (
-      <div key={i} className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-accent" : "bg-muted"}`} />
-    ))}
-    <span className="ml-3 text-sm font-medium text-muted-foreground">{step}/{total}</span>
-  </div>
-);
-
-const Step = ({ title, subtitle, children }: any) => (
+const Step = ({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) => (
   <div>
-    <h2 className="font-display text-2xl font-bold">{title}</h2>
+    <h2 className="font-display text-2xl font-semibold tracking-tight">{title}</h2>
     {subtitle && <p className="mt-1 text-muted-foreground">{subtitle}</p>}
     <div className="mt-6">{children}</div>
   </div>
@@ -598,7 +582,7 @@ const Choice = ({ value, onChange, options, compact }: {
       const active = value === o.v;
       return (
         <button key={o.v} type="button" onClick={() => onChange(o.v)}
-          className={`rounded-2xl border-2 p-5 text-left transition-all ${active ? "border-accent bg-accent/5 shadow-soft" : "border-border hover:border-accent/50"}`}>
+          className={`rounded-2xl border p-5 text-left transition duration-300 ${active ? "border-accent bg-accent/5 shadow-soft" : "border-border hover:-translate-y-0.5 hover:border-accent/60"}`}>
           <div className="font-display text-lg font-bold">{o.label}</div>
           {o.desc && <div className="mt-1 text-sm text-muted-foreground">{o.desc}</div>}
         </button>
@@ -625,7 +609,7 @@ const CatUpload = ({ label, count, required, onChange }: {
   label: string; count: number; required?: boolean;
   onChange: (files: FileList | null) => void;
 }) => (
-  <label className={`flex cursor-pointer flex-col items-start gap-1 rounded-md border-2 border-dashed p-3 text-sm transition-colors hover:border-accent ${count > 0 ? "border-accent bg-accent/5" : "border-border bg-background"}`}>
+  <label className={`flex cursor-pointer flex-col items-start gap-1 rounded-2xl border-2 border-dashed p-3 text-sm transition duration-300 hover:border-accent ${count > 0 ? "border-accent bg-accent/5 shadow-soft" : "border-border bg-background"}`}>
     <span className="flex w-full items-center justify-between font-semibold">
       <span>{label} {required && <span className="text-destructive">*</span>}</span>
       {count > 0 && <span className="rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground">{count}</span>}
@@ -641,7 +625,7 @@ const CatUpload = ({ label, count, required, onChange }: {
 const PreviewTile = ({ file, caption, onRemove }: { file: File; caption: string; onRemove: () => void }) => {
   const url = useMemo(() => URL.createObjectURL(file), [file]);
   return (
-    <div className="relative aspect-square overflow-hidden rounded-md border">
+    <div className="relative aspect-square overflow-hidden rounded-2xl border">
       <img src={url} alt={caption} className="h-full w-full object-cover" />
       <span className="absolute bottom-0 left-0 right-0 bg-background/80 px-1 py-0.5 text-[10px] font-medium capitalize">{caption.replace("_", " ")}</span>
       <button type="button" onClick={onRemove}

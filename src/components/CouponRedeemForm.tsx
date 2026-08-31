@@ -88,20 +88,20 @@ export function CouponRedeemForm({ onSuccess }: { onSuccess?: () => void }) {
   const canSubmit = status.kind === "valid" && !loading;
 
   return (
-    <div className="mt-4 max-w-sm mx-auto">
+    <div className="mx-auto mt-4 max-w-sm rounded-2xl border border-border bg-card p-4 shadow-soft">
       <div className="flex items-center gap-2">
         <Input
           placeholder="CÓDIGO"
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          className="uppercase"
+          className="uppercase rounded-full"
           onKeyDown={(e) => e.key === "Enter" && canSubmit && submit()}
           autoFocus
         />
-        <Button size="sm" variant="hero" onClick={submit} disabled={!canSubmit}>
+        <Button size="sm" variant="hero" className="rounded-full" onClick={submit} disabled={!canSubmit}>
           {loading ? "..." : "Resgatar"}
         </Button>
-        <Button size="sm" variant="ghost" onClick={() => { setOpen(false); setCode(""); setStatus({ kind: "idle" }); }}>Cancelar</Button>
+        <Button size="sm" variant="ghost" className="rounded-full" onClick={() => { setOpen(false); setCode(""); setStatus({ kind: "idle" }); }}>Cancelar</Button>
       </div>
       {status.kind === "checking" && (
         <p className="mt-2 text-xs text-muted-foreground inline-flex items-center gap-1">

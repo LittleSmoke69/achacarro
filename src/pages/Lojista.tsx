@@ -1,17 +1,15 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
+import { FormPage, QuizStepper } from "@/components/forms/form-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/PasswordInput";
-import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { CheckCircle2, Upload, ShieldCheck } from "lucide-react";
+import { Upload, ShieldCheck } from "lucide-react";
 import { DISTRITOS } from "@/lib/distritos";
 
 type FormState = {
@@ -180,64 +178,39 @@ const Lojista = () => {
     setDone(true);
   };
 
-  const progress = (step / 4) * 100;
-
   if (done) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <section className="container flex flex-1 items-center justify-center py-16">
-          <div className="mx-auto max-w-2xl rounded-3xl border bg-card p-10 text-center shadow-soft">
-            <ShieldCheck className="mx-auto h-16 w-16 text-accent" />
-            <h1 className="mt-4 font-display text-3xl font-extrabold">Registo recebido!</h1>
-            <p className="mt-3 text-muted-foreground">
-              A sua conta ficou em análise. Após validação dos documentos pela nossa equipa,
-              terá acesso ao painel para começar a receber oportunidades de clientes
-              interessados em comprar carro.
-            </p>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Para começar a receber leads, ative agora a sua subscrição ou utilize um cupom no painel.
-            </p>
-            <Button variant="hero" size="xl" className="mt-8 w-full"
-                    onClick={() => navigate("/painel?checkout=1")}>
-              Ativar acesso
-            </Button>
-          </div>
-        </section>
-        <SiteFooter />
-      </div>
+      <FormPage eyebrow="Stand" title="Registo recebido" subtitle="A conta ficou em análise. Depois da validação, acede ao painel.">
+        <div className="py-4 text-center">
+          <ShieldCheck className="mx-auto h-16 w-16 text-accent" />
+          <p className="mt-4 text-muted-foreground">
+            Após validação dos documentos pela nossa equipa, terá acesso ao painel para começar a receber oportunidades de clientes interessados em comprar carro.
+          </p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Para começar a receber leads, ative agora a sua subscrição ou utilize um cupom no painel.
+          </p>
+          <Button variant="hero" size="xl" className="mt-8 w-full rounded-full"
+                  onClick={() => navigate("/painel?checkout=1")}>
+            Ativar acesso
+          </Button>
+        </div>
+      </FormPage>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <SiteHeader />
-      <section className="bg-gradient-hero py-10 text-primary-foreground">
-        <div className="container">
-          <h1 className="font-display text-3xl font-extrabold md:text-4xl">Registo de Stand</h1>
-          <p className="mt-2 text-primary-foreground/80">
-            Registre o seu stand e comece a receber oportunidades de clientes interessados em comprar carro.
-          </p>
-        </div>
-      </section>
-      <section className="container py-10">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-6 rounded-2xl border-2 border-accent/40 bg-accent/10 p-5">
-            <p className="font-semibold text-foreground">
-              ⚠️ O registo de stands é exclusivo para profissionais do setor automóvel com stand físico aberto e atividade profissional ativa.
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Todos os registos passam por análise e verificação da equipa AchaCarro.pt.
-            </p>
-          </div>
-          <div className="mb-6">
-            <div className="mb-2 flex justify-between text-sm font-medium text-muted-foreground">
-              <span>Passo {step} de 4</span><span>{Math.round(progress)}%</span>
-            </div>
-            <Progress value={progress} />
-          </div>
+    <FormPage
+      eyebrow="Stand"
+      title="Registo de stand"
+      subtitle="Exclusivo para profissionais com stand físico e atividade ativa."
+    >
+          <QuizStepper step={step} labels={["Empresa", "Documentos", "Venda", "Leads"]} />
 
-          <div className="rounded-3xl border bg-card p-6 shadow-soft md:p-10">
+          <div className="mb-6 rounded-2xl border border-accent/30 bg-accent/5 p-4">
+            <p className="text-sm font-medium text-foreground">
+              Todos os registos passam por verificação da equipa AchaCarro.pt.
+            </p>
+          </div>
             {step === 1 && (
               <div className="space-y-5">
                 <H title="Dados da empresa" sub="Informações de contacto e identificação fiscal." />
@@ -289,11 +262,11 @@ const Lojista = () => {
             {step === 4 && (
               <div className="space-y-4">
                 <H title="Configuração de leads" sub="Que tipo de clientes deseja receber?" />
-                <label className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${data.aceita_particular ? "border-accent bg-accent/10" : ""}`}>
+                <label className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition ${data.aceita_particular ? "border-accent bg-accent/5 shadow-soft" : "border-border hover:border-accent/50"}`}>
                   <Checkbox checked={data.aceita_particular} onCheckedChange={v=>set("aceita_particular",!!v)} />
                   <div><div className="font-semibold">Particular</div><div className="text-sm text-muted-foreground">Cliente final para uso próprio</div></div>
                 </label>
-                <label className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${data.aceita_revenda ? "border-accent bg-accent/10" : ""}`}>
+                <label className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition ${data.aceita_revenda ? "border-accent bg-accent/5 shadow-soft" : "border-border hover:border-accent/50"}`}>
                   <Checkbox checked={data.aceita_revenda} onCheckedChange={v=>set("aceita_revenda",!!v)} />
                   <div><div className="font-semibold">Revenda</div><div className="text-sm text-muted-foreground">Outros stands / revendedores</div></div>
                 </label>
@@ -301,31 +274,30 @@ const Lojista = () => {
             )}
 
             <div className="mt-8 flex justify-between gap-3">
-              <Button variant="outline" onClick={()=>setStep(s=>Math.max(1,s-1))} disabled={step===1 || loading}>
+              <Button variant="outline" className="rounded-full" onClick={()=>setStep(s=>Math.max(1,s-1))} disabled={step===1 || loading}>
                 Voltar
               </Button>
               {step < 4 ? (
-                <Button variant="hero" size="lg" onClick={next}>Continuar</Button>
+                <Button variant="hero" size="lg" className="rounded-full" onClick={next}>Continuar</Button>
               ) : (
-                <Button variant="hero" size="lg" onClick={submit} disabled={loading}>
+                <Button variant="hero" size="lg" className="rounded-full" onClick={submit} disabled={loading}>
                   {loading ? "A processar..." : "Concluir registo"}
                 </Button>
               )}
             </div>
-          </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Já tem conta? <Link to="/login" className="font-semibold text-accent hover:underline">Entrar</Link>
           </p>
-        </div>
-      </section>
-      <SiteFooter />
-    </div>
+    </FormPage>
   );
 };
 
 const H = ({ title, sub }: { title: string; sub: string }) => (
-  <div><h2 className="font-display text-2xl font-bold">{title}</h2><p className="mt-1 text-sm text-muted-foreground">{sub}</p></div>
+  <div>
+    <h2 className="font-display text-2xl font-semibold tracking-tight">{title}</h2>
+    <p className="mt-1 text-sm text-muted-foreground">{sub}</p>
+  </div>
 );
 const F = ({ label, children, full }: any) => (
   <div className={`space-y-1.5 ${full ? "md:col-span-2" : ""}`}>
@@ -333,18 +305,18 @@ const F = ({ label, children, full }: any) => (
   </div>
 );
 const YN = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v:boolean)=>void }) => (
-  <div className="flex items-center justify-between rounded-lg border p-4">
+  <div className="flex items-center justify-between rounded-2xl border border-border p-4">
     <span className="font-medium">{label}</span>
     <div className="flex gap-2">
-      <Button type="button" size="sm" variant={value ? "hero" : "outline"} onClick={()=>onChange(true)}>Sim</Button>
-      <Button type="button" size="sm" variant={!value ? "hero" : "outline"} onClick={()=>onChange(false)}>Não</Button>
+      <Button type="button" size="sm" className="rounded-full" variant={value ? "hero" : "outline"} onClick={()=>onChange(true)}>Sim</Button>
+      <Button type="button" size="sm" className="rounded-full" variant={!value ? "hero" : "outline"} onClick={()=>onChange(false)}>Não</Button>
     </div>
   </div>
 );
 const FileField = ({ label, file, onChange, accept = ".pdf,.jpg,.jpeg,.png", placeholder = "Clique para enviar (PDF, JPG, PNG · máx. 10MB)", hint }: { label: string; file: File | null; onChange: (f: File | null) => void; accept?: string; placeholder?: string; hint?: string }) => (
   <div className="space-y-1.5">
     <Label className="text-sm font-semibold">{label}</Label>
-    <label className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-border bg-secondary/50 p-4 hover:border-accent">
+    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-secondary/50 p-4 transition hover:border-accent">
       <Upload className="h-5 w-5 text-accent" />
       <div className="flex-1">
         {file ? (
